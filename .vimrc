@@ -26,7 +26,8 @@ set laststatus=2  " Affiche la barre d'état en plus de la barre de commande
 set statusline=%-Y%k%=%f%10p%%%10l/%L "Format de la barre d'état
 
 set wildmenu
-set wildmode=list:full " Affiche une liste lors de complétion de commandes/fichiers
+" set wildmode=list:full " Affiche une liste lors de complétion de commandes/fichiers
+set wildmode=list:longest " Affiche une liste lors de complétion de commandes/fichiers
 set wildignore=*.pyc
 
 set backup         " Activer la sauvegarde
@@ -44,7 +45,7 @@ call vundle#rc()
 Bundle 'laarmen/git-vim.git'
 Bundle 'lokaltog/vim-easymotion'
 Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-Bundle 'three/html5.vim'
+"Bundle 'three/html5.vim'
 Bundle 'altercation/vim-colors-solarized'
 Bundle "msanders/snipmate.vim"
 Bundle 'kevinw/pyflakes-vim.git'
@@ -83,8 +84,7 @@ map <tab> >>
 map <S-tab> <<
 vmap <tab> >gv
 vmap <S-tab> <gv
-map <F3> :s/^/#<CR>  " Commente le bloc sélectionné
-map <F4> :s/^#//<CR> " Décommente le bloc sélectionné
+map <F2> :%s/  *$// <CR>
 map <F5> :set paste!<Bar>set paste?<CR>
 map <F6> :set number!<Bar>set number
 nnoremap <silent> <F8> :TlistToggle<CR>
@@ -102,43 +102,32 @@ imap <C-t> <Esc>:tabnew<CR>
 nnoremap <C-f><C-f> :FufFile<CR>
 
 "filetype plugin indent on  "Detection to determine the type of the current file
+
 au BufRead *.stl so  $VIMRUNTIME/syntax/html.vim
-"Commente les lignes sélectionnées
-"vmap c 0I#<ESC>
-"Commente la ligne courante
-"map c 0I#<ESC>
-imap ,pprint from pprint import pprint<CR>pprint()<ESC>i
-imap ,start_file # -*- coding: UTF-8 -*-<CR><CR># Import from the Standard Library<CR><CR># Import from itools<CR><CR># Import from Zope<CR><CR># Import from PvxCoreApplication
+au BufNewFile,BufRead *.rst so  $VIMRUNTIME/syntax/rst.vim
+au BufNewFile,BufRead *.rst setlocal spell spelllang=fr
+let g:languagetool_jar=$HOME . '/Program/LanguageTool/LanguageTool.jar'
 "Completion Python
 autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType python let b:surround_33 = "\"\"\" \r \"\"\""
-"autocmd FileType python setlocal omnifunc=pysmell#Complete
-"autocmd FileType python compiler pylint
+" autocmd FileType python let b:surround_33 = "\"\"\" \r \"\"\""
+:au BufWinEnter *.py let w:m1=matchadd('Search', '\%<81v.\%>77v', -1)
+:au BufWinEnter *.py let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
+
+autocmd filetype html        set omnifunc=htmlcomplete#CompleteTags
+autocmd filetype css         set omnifunc=csscomplete#CompleteCSS
+au filetype javascript  set omnifunc=javascriptcomplete#CompleteJS
+au filetype c           set omnifunc=ccomplete#Complete
+au filetype php         set omnifunc=phpcomplete#CompletePHP
+au filetype ruby        set omnifunc=rubycomplete#Complete
+au filetype sql         set omnifunc=sqlcomplete#Complete
+au filetype xml         set omnifunc=xmlcomplete#CompleteTags
 
 au FileType xml setlocal foldmethod=syntax
 "Surligne les espaces de fin de ligne
 highlight WhitespaceEOL ctermbg=red guibg=red
 match WhitespaceEOL /\s\+$/
-"Ouvre le navigateur de classe
-"Jump between your code and python class libraries
-python << EOF
-def set_path_python():
-    import os,sys,vim
-    for p in sys.path:
-        if os.path.isdir(p):
-            vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
-EOF
-"autocmd FileType python python set_path_python()
-"autocmd FileType python setlocal makeprg=python\ -c\ \"import\ py_compile;\ py_compile.compile(r'%')\"
-"autocmd FileType python setlocal errorformat=
-"	\%A\ \ File\ \"%f\"\\\,\ line\ %l\\\,%m,
-"	\%C\ \ \ \ %.%#,
-"	\%+Z%.%#Error\:\ %.%#,
-"	\%A\ \ File\ \"%f\"\\\,\ line\ %l,
-"	\%+C\ \ %.%#,
-"	\%-C%p^,
-"	\%Z%m,
-"	\%-G%.%#
+" Supprime automatiquement les espaces de fin de ligne
+autocmd BufWritePre * :%s/\s\+$//e
 
 "Copier/coller avec la souris
 function! Paste(...)
@@ -195,38 +184,6 @@ function MyTabLine()
 	  return s
 endfunction
 
-function MyTabLabel(n)
-	  let buflist = tabpagebuflist(a:n)
-	  let winnr = tabpagewinnr(a:n)
-	  return bufname(buflist[winnr - 1])
-endfunction
-
-function GuiTabLabel()
-	  let label = ''
-	  let bufnrlist = tabpagebuflist(v:lnum)
-
-	  " Add '+' if one of the buffers in the tab page is modified
-	  for bufnr in bufnrlist
-	    if getbufvar(bufnr, "&modified")
-	      let label = '+'
-	      break
-	    endif
-	  endfor
-
-	  " Append the number of windows in the tab page if more than one
-	  let wincount = tabpagewinnr(v:lnum, '$')
-	  if wincount > 1
-	    let label .= wincount
-	  endif
-	  if label != ''
-	    let label .= ' '
-	  endif
-
-	  " Append the buffer name
-	  return label . bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
-	endfunction
-" Supprime automatiquement les espaces de fin de ligne
-autocmd BufWritePre * :%s/\s\+$//e
 
 function! GG(args)
     execute 'tabnew'
@@ -243,3 +200,36 @@ function! GitGrepWordUnderCursor()
     let a = @
     call GitGrep(a)
 endfunction
+
+python << EOF
+import vim
+import re
+def clean_syntax():
+    patterns = [
+        {'regexp': ' *,',
+         'replace': r','},
+        {'regexp': ', *',
+         'replace': r', '},
+        {'regexp': ',([^ ])',
+         'replace': r', \1'},
+        {'regexp': ' *: *',
+         'replace': r': '},
+        {'regexp': ':([^ ])',
+         'replace': r': \1'},
+        {'regexp': '(\[|{|\() *',
+         'replace': r'\1'},
+        {'regexp': '([^ ]) *(\]|}|\))',
+         'replace': r'\1\2'},
+        {'regexp': ' *$',
+         'replace': r''},
+        ]
+    r = vim.current.range
+    b = vim.current.buffer
+    for num_line in range(r.start, r.end+1):
+        for pattern in patterns:
+            b[num_line] = re.sub(
+                pattern['regexp'],
+                pattern['replace'],
+                b[num_line])
+EOF
+map  <F6> :python clean_syntax()<CR><ESC>: echo '!!! Syntax cleaned !!!'<CR>

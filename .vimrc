@@ -59,6 +59,7 @@ Bundle 'L9'
 Bundle 'FuzzyFinder'
 Bundle 'taglist-plus'
 Bundle "YankRing.vim"
+Bundle "nvie/vim-rst-tables"
 nnoremap <silent> <F11> :YRShow<CR>
 
 " ...
@@ -233,3 +234,50 @@ def clean_syntax():
                 b[num_line])
 EOF
 map  <F6> :python clean_syntax()<CR><ESC>: echo '!!! Syntax cleaned !!!'<CR>
+
+
+if !has("gui_running")
+	" À défaut de pouvoir changer la forme du curseur
+	" en fonction du mode de Vim, on peut changer sa couleur
+	" en passant par des fonctions de contrôle.
+	if &term =~ "rxvt-unicode"
+		" From ECMA-48:
+		"   OSC - OPERATING SYSTEM COMMAND:
+		"     Representation: 09/13 or ESC 05/13 (this is \033] here)
+		"     OSC is used as the opening delimiter of a control string for operating system use.
+		"     The command string following may consist of a sequence of bit combinations
+		"     in the range 00/08 to 00/13 and 02/00 to 07/14.
+		"     The control string is closed by the terminating delimiter STRING TERMINATOR (ST).
+		"     The interpretation of the command string depends on the relevant operating system.
+		" From :h t_SI:
+		"   Added by Vim (there are no standard codes for these):
+		"     t_SI start insert mode (bar cursor shape)
+		"     t_EI end insert mode (block cursor shape)
+		let &t_SI = "\033]12;red\007"
+		let &t_EI = "\033]12;green\007"
+
+		:silent !echo -ne "\033]12;green\007"
+		autocmd VimLeave * :silent :!echo -ne "\033]12;green\007"
+	endif
+	" screen rajoute une couche qu'il faut percer.
+	if &term =~ "screen"
+		" From man screen:
+		"   Virtual Terminal -> Control Sequences:
+		"     ESC P  (A)  Device Control String
+		"                 Outputs a string directly to the host
+		"                 terminal without interpretation.
+		"     ESC \  (A)  String Terminator
+		let &t_SI = "\033P\033]12;red\007\033\\"
+		let &t_EI = "\033P\033]12;green\007\033\\"
+
+		:silent !echo -ne "\033P\033]12;green\007\033\\"
+		autocmd VimLeave * :silent :!echo -ne "\033P\033]12;green\007\033\\"
+	endif
+endif
+
+if !has("gui_running")
+	" La plupart des émulateurs de terminaux envoient Tab pour C-Tab,
+	" aussi ai-je dans mon ~/.Xresources :
+	" URxvt*keysym.C-Tab: \033[27;5;9~
+	nmap <Esc>[27;5;9~ :tabprevious<CR>
+endif

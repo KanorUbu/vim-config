@@ -54,6 +54,7 @@ Bundle "scrooloose/nerdtree.git"
 Bundle "mhz/vim-matchit"
 Bundle "tomtom/tcomment_vim"
 Bundle "chrisbra/csv.vim"
+Bundle "Bogdanp/pyrepl.vim"
 " vim-scripts repos
 Bundle 'L9'
 Bundle 'FuzzyFinder'
@@ -110,7 +111,6 @@ au BufNewFile,BufRead *.rst setlocal spell spelllang=fr
 let g:languagetool_jar=$HOME . '/Program/LanguageTool/LanguageTool.jar'
 "Completion Python
 autocmd FileType python set omnifunc=pythoncomplete#Complete
-" autocmd FileType python let b:surround_33 = "\"\"\" \r \"\"\""
 :au BufWinEnter *.py let w:m1=matchadd('Search', '\%<81v.\%>77v', -1)
 :au BufWinEnter *.py let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 
@@ -122,6 +122,10 @@ au filetype php         set omnifunc=phpcomplete#CompletePHP
 au filetype ruby        set omnifunc=rubycomplete#Complete
 au filetype sql         set omnifunc=sqlcomplete#Complete
 au filetype xml         set omnifunc=xmlcomplete#CompleteTags
+
+autocmd FileType html set shiftwidth=2  "Défini 4 espace comme taille d'indentation
+autocmd FileType html set tabstop=2     "Défini 2 espace commet taille d'indentation
+autocmd FileType html set softtabstop=2 "Nombre d'espaces qu'un <Tab> ou <RetArr> représentent
 
 au FileType xml setlocal foldmethod=syntax
 "Surligne les espaces de fin de ligne

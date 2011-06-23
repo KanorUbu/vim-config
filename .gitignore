@@ -1,2 +1,4 @@
 backup
 bundle
+.vim/backup/*
+.vim/backup/.*

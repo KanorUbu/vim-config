@@ -37,7 +37,7 @@ set wildmode=list:longest " Affiche une liste lors de complétion de commandes/f
 set wildignore=*.pyc
 
 set backup         " Activer la sauvegarde
-set backupdir=$HOME/.vim/backup
+set backupdir=$HOME/.vim-backup
 
 "Vundle
 filetype off                   " required!
@@ -71,9 +71,10 @@ Bundle "wincent/Command-T"
 Bundle "Lokaltog/vim-powerline"
 Bundle "scrooloose/syntastic"
 Bundle "sjl/gundo.vim"
-noremap <silent> <F11> :YRShow<CR>
+Bundle "FlagIt"
+Bundle "css_color.vim"
+nnoremap <silent> <F11> :YRShow<CR>
 
-" ...
 
 filetype plugin indent on     " required!
 "End vundle
@@ -81,7 +82,7 @@ filetype plugin indent on     " required!
 "Zenburn
 Bundle 'Zenburn'
 " colorscheme zenburn
-colorscheme peachpuff
+" colorscheme peachpuff
 
 "Syntastic
 let g:syntastic_check_on_open=1
@@ -89,6 +90,15 @@ let g:syntastic_enable_highlighting = 1
 let g:syntastic_mode_map = { 'mode': 'active',
                            \ 'active_filetypes': ['ruby', 'python'],
                            \ 'passive_filetypes': ['puppet'] }
+"Bundle 'Zenburn'
+"colorscheme jungle
+
+let g:solarized_termcolors=256    "default value is 16
+let g:solarized_termtrans=1
+let g:solarized_degrade=1
+syntax enable
+set background=light
+colorscheme solarized
 
 "call togglebg#map("<F10>")
 "set background=dark
@@ -97,7 +107,10 @@ let g:syntastic_mode_map = { 'mode': 'active',
 
 "PowerLine
 let Powerline_symbols = 'fancy'
+"
 
+let icons_path = "/home/dubreil/.vim/img/"
+let g:Fi_Flags = { "arrow" : [icons_path."Coffee.png", "> ", 1, "texthl=Title"]}
 
 
 noremap <C-K> <C-U>  " Déplace 1/2 écran vers le haut
@@ -122,6 +135,7 @@ imap <C-tab> <Esc>:tabnext<CR>i
 nmap <C-t> :tabnew<CR>
 imap <C-t> <Esc>:tabnew<CR>
 nnoremap <C-f><C-f> :FufFile<CR>
+map <C-_> :tab tag <C-R>=expand("<cword>")<CR><CR>
 
 "filetype plugin indent on  "Detection to determine the type of the current file
 

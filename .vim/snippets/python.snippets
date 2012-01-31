@@ -5,7 +5,7 @@ snippet pdb
 
 snippet pprint
 	import pprint
-	pprint.pprint($1)
+	pprint.pprint({$1})
 
 snippet bloc_action
 	{ 'field': 'bloc_validation', 'title': '',
@@ -13,3 +13,21 @@ snippet bloc_action
 	'widget': 'BlockAction', 'fields': [
 	     ${1}
 	]}
+
+snippet obj_ds
+		class ${1}(${2}):
+			""""""
+			ds_id = "${3}"
+			sql_schema_name = "${4}"
+			sql_content_name = "${5}"
+			sql_sequence_name = "${6}"
+			sql_storage = 1
+
+			local_data_definition = [
+				['field', 'field', 'M', 1, 1, 'string', '', ''],
+			]
+			full_data_definition = PvxDataList.standard_data_definition + local_data_definition
+
+snippet deco
+	def ${1}(self, record, field_name, **kwargs):
+		pass

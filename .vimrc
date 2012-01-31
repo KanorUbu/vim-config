@@ -21,9 +21,15 @@ set ignorecase    "Ignore la casse dans les motifs de recherche
 set mouse=a       "Permet au click de souris de modifier la position du curseur
 set cursorline    "Soulignement de la ligne courante
 highlight CursorLine guibg=grey    "Surligne la ligne courante en gris
+set completeopt=menuone,longest,preview
 
 set laststatus=2  " Affiche la barre d'état en plus de la barre de commande
+" set statusline=%-Y%k%=%f%10p%%%10l/%L "Format de la barre d'état
 set statusline=%-Y%k%=%f%10p%%%10l/%L "Format de la barre d'état
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
 
 set wildmenu
 " set wildmode=list:full " Affiche une liste lors de complétion de commandes/fichiers
@@ -45,10 +51,8 @@ call vundle#rc()
 Bundle 'laarmen/git-vim.git'
 Bundle 'lokaltog/vim-easymotion'
 Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-"Bundle 'three/html5.vim'
 Bundle 'altercation/vim-colors-solarized'
 Bundle "msanders/snipmate.vim"
-Bundle 'kevinw/pyflakes-vim.git'
 Bundle "tpope/vim-surround"
 Bundle "scrooloose/nerdtree.git"
 Bundle "mhz/vim-matchit"
@@ -61,7 +65,13 @@ Bundle 'FuzzyFinder'
 Bundle 'taglist-plus'
 Bundle "YankRing.vim"
 Bundle "nvie/vim-rst-tables"
-nnoremap <silent> <F11> :YRShow<CR>
+Bundle "jceb/vim-orgmode"
+Bundle "utl.vim"
+Bundle "wincent/Command-T"
+Bundle "Lokaltog/vim-powerline"
+Bundle "scrooloose/syntastic"
+Bundle "sjl/gundo.vim"
+noremap <silent> <F11> :YRShow<CR>
 
 " ...
 
@@ -70,20 +80,30 @@ filetype plugin indent on     " required!
 
 "Zenburn
 Bundle 'Zenburn'
-colorscheme zenburn
+" colorscheme zenburn
+colorscheme peachpuff
+
+"Syntastic
+let g:syntastic_check_on_open=1
+let g:syntastic_enable_highlighting = 1
+let g:syntastic_mode_map = { 'mode': 'active',
+                           \ 'active_filetypes': ['ruby', 'python'],
+                           \ 'passive_filetypes': ['puppet'] }
 
 "call togglebg#map("<F10>")
 "set background=dark
 "colorscheme solarized
 "let g:solarized_termcolors=256
-"
+
+"PowerLine
+let Powerline_symbols = 'fancy'
 
 
 
 noremap <C-K> <C-U>  " Déplace 1/2 écran vers le haut
 noremap <C-J> <C-D>  " Déplace 1/2 écran vers le bas
 map <tab> >>
-map <S-tab> <<
+map <S-tab> <
 vmap <tab> >gv
 vmap <S-tab> <gv
 map <F2> :%s/  *$// <CR>

@@ -29,6 +29,7 @@ set statusline=%-Y%k%=%f%10p%%%10l/%L "Format de la barre d'état
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
+set nofoldenable
 
 
 set wildmenu
@@ -72,7 +73,12 @@ Bundle "Lokaltog/vim-powerline"
 Bundle "scrooloose/syntastic"
 Bundle "sjl/gundo.vim"
 Bundle "FlagIt"
-Bundle "css_color.vim"
+" Bundle "css_color.vim"
+Bundle "godlygeek/tabular"
+" Bundle "klen/python-mode"
+" let g:pymode_lint
+" Check code every save
+" let g:pymode_lint_write = 0
 nnoremap <silent> <F11> :YRShow<CR>
 
 
@@ -81,7 +87,7 @@ filetype plugin indent on     " required!
 
 "Zenburn
 Bundle 'Zenburn'
-" colorscheme zenburn
+colorscheme zenburn
 " colorscheme peachpuff
 
 "Syntastic
@@ -89,8 +95,7 @@ let g:syntastic_check_on_open=1
 let g:syntastic_enable_highlighting = 1
 let g:syntastic_mode_map = { 'mode': 'active',
                            \ 'active_filetypes': ['ruby', 'python'],
-                           \ 'passive_filetypes': ['puppet'] }
-"Bundle 'Zenburn'
+                           \ 'passive_filetypes': ['puppet', 'rst'] }
 "colorscheme jungle
 
 let g:solarized_termcolors=256    "default value is 16
@@ -98,7 +103,7 @@ let g:solarized_termtrans=1
 let g:solarized_degrade=1
 syntax enable
 set background=light
-colorscheme solarized
+" colorscheme solarized
 
 "call togglebg#map("<F10>")
 "set background=dark
@@ -112,8 +117,21 @@ let Powerline_symbols = 'fancy'
 let icons_path = "/home/dubreil/.vim/img/"
 let g:Fi_Flags = { "arrow" : [icons_path."Coffee.png", "> ", 1, "texthl=Title"]}
 
+set listchars=nbsp:¤,tab:>-,trail:¤,extends:>,precedes:<
 
-noremap <C-K> <C-U>  " Déplace 1/2 écran vers le haut
+function! s:align()
+  let p = '^\s*|\s.*\s|\s*$'
+  if exists(':Tabularize') && getline('.') =~# '^\s*|' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
+    let column = strlen(substitute(getline('.')[0:col('.')],'[^|]','','g'))
+    let position = strlen(matchstr(getline('.')[0:col('.')],'.*|\s*\zs.*'))
+    Tabularize/|/l1
+    normal! 0
+    call search(repeat('[^|]*|',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
+  endif
+endfunction
+inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
+
+ noremap <C-K> <C-U>  " Déplace 1/2 écran vers le haut
 noremap <C-J> <C-D>  " Déplace 1/2 écran vers le bas
 map <tab> >>
 map <S-tab> <
@@ -148,7 +166,7 @@ autocmd FileType python set omnifunc=pythoncomplete#Complete
 :au BufWinEnter *.py let w:m1=matchadd('Search', '\%<81v.\%>77v', -1)
 :au BufWinEnter *.py let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 
-autocmd filetype html        set omnifunc=htmlcomplete#CompleteTags
+" autocmd filetype html        set omnifunc=htmlcomplete#CompleteTags
 autocmd filetype css         set omnifunc=csscomplete#CompleteCSS
 au filetype javascript  set omnifunc=javascriptcomplete#CompleteJS
 au filetype c           set omnifunc=ccomplete#Complete

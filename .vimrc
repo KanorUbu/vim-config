@@ -15,7 +15,7 @@ set showcmd       "Affiche en bas à droite la commande en cours de saisie
 set showmode      "Affiche en bas à droite le mode actif
 set showmatch     "Affiche automatiquement la parenthèse correspondante
 set wrap          "Si ligne trop longue se poursuit sur ligne suivante
-set incsearch     "Montre correspondance partielle du motif de recherche
+"set incsearch     "Montre correspondance partielle du motif de recherche
 set hlsearch      "Surligne les occurrences de la chaîne recherchée
 set ignorecase    "Ignore la casse dans les motifs de recherche
 set mouse=a       "Permet au click de souris de modifier la position du curseur
@@ -29,16 +29,15 @@ set statusline=%-Y%k%=%f%10p%%%10l/%L "Format de la barre d'état
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
-set nofoldenable
+" set nofoldenable
 
 
 set wildmenu
-" set wildmode=list:full " Affiche une liste lors de complétion de commandes/fichiers
 set wildmode=list:longest " Affiche une liste lors de complétion de commandes/fichiers
 set wildignore=*.pyc
 
-set backup         " Activer la sauvegarde
-set backupdir=$HOME/.vim-backup
+"set backup         " Activer la sauvegarde
+"set backupdir=$HOME/.vim-backup
 
 "Vundle
 filetype off                   " required!
@@ -50,35 +49,34 @@ call vundle#rc()
 "
 " original repos on github
 Bundle 'laarmen/git-vim.git'
-Bundle 'lokaltog/vim-easymotion'
+" Bundle 'tpope/vim-fugitive'
+Bundle 'Lokaltog/vim-easymotion'
 Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-Bundle 'altercation/vim-colors-solarized'
 Bundle "msanders/snipmate.vim"
 Bundle "tpope/vim-surround"
 Bundle "scrooloose/nerdtree.git"
-Bundle "mhz/vim-matchit"
 Bundle "tomtom/tcomment_vim"
 Bundle "chrisbra/csv.vim"
-Bundle "Bogdanp/pyrepl.vim"
-" vim-scripts repos
 Bundle 'L9'
 Bundle 'FuzzyFinder'
-Bundle 'taglist-plus'
+Bundle "int3/vim-taglist-plus"
 Bundle "YankRing.vim"
 Bundle "nvie/vim-rst-tables"
 Bundle "jceb/vim-orgmode"
 Bundle "utl.vim"
 Bundle "wincent/Command-T"
-Bundle "Lokaltog/vim-powerline"
+" Bundle "Lokaltog/vim-powerline"
+Bundle "bling/vim-airline"
 Bundle "scrooloose/syntastic"
 Bundle "sjl/gundo.vim"
 Bundle "FlagIt"
-" Bundle "css_color.vim"
 Bundle "godlygeek/tabular"
-" Bundle "klen/python-mode"
-" let g:pymode_lint
-" Check code every save
-" let g:pymode_lint_write = 0
+Bundle "Jinja"
+Bundle "davidhalter/jedi-vim"
+Bundle "kien/ctrlp.vim"
+let g:jedi#popup_on_dot = 1
+let g:jedi#auto_initialization = 1
+autocmd FileType python setlocal completeopt-=preview
 nnoremap <silent> <F11> :YRShow<CR>
 
 
@@ -88,6 +86,7 @@ filetype plugin indent on     " required!
 "Zenburn
 Bundle 'Zenburn'
 colorscheme zenburn
+"colorscheme ron
 " colorscheme peachpuff
 
 "Syntastic
@@ -96,26 +95,18 @@ let g:syntastic_enable_highlighting = 1
 let g:syntastic_mode_map = { 'mode': 'active',
                            \ 'active_filetypes': ['ruby', 'python'],
                            \ 'passive_filetypes': ['puppet', 'rst'] }
-"colorscheme jungle
+let g:syntastic_python_checkers = ['pyflakes']
 
-let g:solarized_termcolors=256    "default value is 16
-let g:solarized_termtrans=1
-let g:solarized_degrade=1
 syntax enable
 set background=light
-" colorscheme solarized
 
-"call togglebg#map("<F10>")
-"set background=dark
-"colorscheme solarized
-"let g:solarized_termcolors=256
 
 "PowerLine
 let Powerline_symbols = 'fancy'
-"
-
 let icons_path = "/home/dubreil/.vim/img/"
 let g:Fi_Flags = { "arrow" : [icons_path."Coffee.png", "> ", 1, "texthl=Title"]}
+"Airline
+let g:airline_powerline_fonts = 1
 
 set listchars=nbsp:¤,tab:>-,trail:¤,extends:>,precedes:<
 
@@ -131,7 +122,7 @@ function! s:align()
 endfunction
 inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
 
- noremap <C-K> <C-U>  " Déplace 1/2 écran vers le haut
+noremap <C-K> <C-U>  " Déplace 1/2 écran vers le haut
 noremap <C-J> <C-D>  " Déplace 1/2 écran vers le bas
 map <tab> >>
 map <S-tab> <
@@ -159,10 +150,11 @@ map <C-_> :tab tag <C-R>=expand("<cword>")<CR><CR>
 
 au BufRead *.stl so  $VIMRUNTIME/syntax/html.vim
 au BufNewFile,BufRead *.rst so  $VIMRUNTIME/syntax/rst.vim
+au BufNewFile,BufRead *.jinja so  $VIMRUNTIME/syntax/xml.vim
 au BufNewFile,BufRead *.rst setlocal spell spelllang=fr
 let g:languagetool_jar=$HOME . '/Program/LanguageTool/LanguageTool.jar'
 "Completion Python
-autocmd FileType python set omnifunc=pythoncomplete#Complete
+" autocmd FileType python set omnifunc=pythoncomplete#Complete
 :au BufWinEnter *.py let w:m1=matchadd('Search', '\%<81v.\%>77v', -1)
 :au BufWinEnter *.py let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 
@@ -180,6 +172,9 @@ autocmd FileType html set tabstop=2     "Défini 2 espace commet taille d'indent
 autocmd FileType html set softtabstop=2 "Nombre d'espaces qu'un <Tab> ou <RetArr> représentent
 
 au FileType xml setlocal foldmethod=syntax
+" au FileType python setlocal foldmethod=syntax
+
+let g:pymode_folding = 1
 "Surligne les espaces de fin de ligne
 highlight WhitespaceEOL ctermbg=red guibg=red
 match WhitespaceEOL /\s\+$/
@@ -212,7 +207,7 @@ echo 'usage: :Paste on|off'
 endif
 endfunction
 :com! -nargs=* Paste call Paste()
-imap <C-Space> <C-X><C-O>
+" imap <C-Space> <C-X><C-O>
 function MyTabLine()
 	  let s = ''
 	  for i in range(tabpagenr('$'))
@@ -337,3 +332,19 @@ if !has("gui_running")
 	" URxvt*keysym.C-Tab: \033[27;5;9~
 	nmap <Esc>[27;5;9~ :tabprevious<CR>
 endif
+
+
+"Activation de la complétion pour les librairies installées dans virtualenv
+py << EOF
+import os.path
+import sys
+import vim
+# if 'VIRTUAL_ENV' in os.environ:
+#     project_base_dir = os.environ['VIRTUAL_ENV']
+#     sys.path.insert(0, project_base_dir)
+#     INSTANCE_HOME = os.environ['PVX_ZOPE_INSTANCE']
+#     sys.path.append(INSTANCE_HOME)
+#     #os.chdir(INSTANCE_HOME)
+#     os.environ['INSTANCE_HOME'] = INSTANCE_HOME
+#     sys.path.append(INSTANCE_HOME)
+EOF

@@ -1,7 +1,7 @@
 # New Webbox
 snippet pdb
-	import pdb
-	pdb.set_trace()
+	import ipdb
+	ipdb.set_trace()
 
 snippet pprint
 	import pprint
@@ -31,3 +31,7 @@ snippet obj_ds
 snippet deco
 	def ${1}(self, record, field_name, **kwargs):
 		pass
+
+snippet deco_g
+	namespace = self.x_base_generic(record, field_name, **kwargs)
+

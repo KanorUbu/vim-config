@@ -42,50 +42,74 @@ set wildignore=*.pyc
 "Vundle
 filetype off                   " required!
 
-set rtp+=~/.vim/vundle.git/
-call vundle#rc()
+"set rtp+=~/.vim/vundle.git/
+"call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
-" My Bundles here:
+" My Plugins here:
+"let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
 "
 " original repos on github
-Bundle 'laarmen/git-vim.git'
-" Bundle 'tpope/vim-fugitive'
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-Bundle "msanders/snipmate.vim"
-Bundle "tpope/vim-surround"
-Bundle "scrooloose/nerdtree.git"
-Bundle "tomtom/tcomment_vim"
-Bundle "chrisbra/csv.vim"
-Bundle 'L9'
-Bundle 'FuzzyFinder'
-Bundle "int3/vim-taglist-plus"
-Bundle "YankRing.vim"
-Bundle "nvie/vim-rst-tables"
-Bundle "jceb/vim-orgmode"
-Bundle "utl.vim"
-Bundle "wincent/Command-T"
-" Bundle "Lokaltog/vim-powerline"
-Bundle "bling/vim-airline"
-Bundle "scrooloose/syntastic"
-Bundle "sjl/gundo.vim"
-Bundle "FlagIt"
-Bundle "godlygeek/tabular"
-Bundle "Jinja"
-Bundle "davidhalter/jedi-vim"
-Bundle "kien/ctrlp.vim"
+" Interface
+Plugin 'bling/vim-airline'
+" Fichier
+Plugin 'scrooloose/nerdtree.git'
+" Déplacement
+Plugin 'Lokaltog/vim-easymotion'
+" Programmation general
+Plugin 'scrooloose/syntastic'
+Plugin 'msanders/snipmate.vim'
+" Plugin 'int3/vim-taglist-plus'
+Plugin 'majutsushi/tagbar'
+Plugin 'tomtom/tcomment_vim'
+"Python
+Plugin 'davidhalter/jedi-vim'
+" Plugin 'Jinja'
+Plugin 'Glench/Vim-Jinja2-Syntax'
+
+" HTML/CSS
+Plugin 'ap/vim-css-color'
+Plugin 'mattn/emmet-vim'
+Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+Plugin 'hail2u/vim-css3-syntax'
+" RST
+Plugin 'nvie/vim-rst-tables'
+" CSV
+Plugin 'chrisbra/csv.vim'
+" GIT
+Plugin 'laarmen/git-vim.git'
+" Orga
+Plugin 'jceb/vim-orgmode'
+"Déplacement dans les fichier/buffer
+Plugin 'L9'
+Plugin 'kien/ctrlp.vim'
+" Remplacement
+Plugin 'und'
+" Trier
+Plugin 'YankRing.vim'
+Plugin 'utl.vim'
+Plugin 'sjl/gundo.vim'
+" Plugin 'FlagIt'
+Plugin 'godlygeek/tabular'
+Plugin 'vim-voom/VOoM'
+Plugin 'altercation/vim-colors-solarized'
+
+call vundle#end()
+filetype plugin indent on     " required!
+"End vundle
+"
 let g:jedi#popup_on_dot = 1
 let g:jedi#auto_initialization = 1
 autocmd FileType python setlocal completeopt-=preview
 nnoremap <silent> <F11> :YRShow<CR>
 
-
-filetype plugin indent on     " required!
-"End vundle
-
 "Zenburn
-Bundle 'Zenburn'
-colorscheme zenburn
+Plugin 'Zenburn'
+"colorscheme zenburn
+colorscheme solarized
+hi normal   ctermfg=black  ctermbg=white
 "colorscheme ron
 " colorscheme peachpuff
 
@@ -93,12 +117,23 @@ colorscheme zenburn
 let g:syntastic_check_on_open=1
 let g:syntastic_enable_highlighting = 1
 let g:syntastic_mode_map = { 'mode': 'active',
-                           \ 'active_filetypes': ['ruby', 'python'],
+                           \ 'active_filetypes': ['ruby', 'python', 'json'],
                            \ 'passive_filetypes': ['puppet', 'rst'] }
 let g:syntastic_python_checkers = ['pyflakes']
 
+"Tagbar
+let g:tagbar_type_css = {
+            \ 'ctagstype' : 'Css',
+    \ 'kinds'     : [
+        \ 'c:classes',
+        \ 's:selectors',
+        \ 'i:identities'
+    \ ]
+    \ }
+
 syntax enable
 set background=light
+let g:solarized_termcolors=256
 
 
 "PowerLine
@@ -131,7 +166,8 @@ vmap <S-tab> <gv
 map <F2> :%s/  *$// <CR>
 map <F5> :set paste!<Bar>set paste?<CR>
 map <F6> :set number!<Bar>set number
-nnoremap <silent> <F8> :TlistToggle<CR>
+" nnoremap <silent> <F8> :TlistToggle<CR>
+nmap <F8> :TagbarToggle<CR>
 nnoremap <F9> :NERDTreeToggle<CR>
 syntax on         "Activation de la coloration syntaxique
 " tab navigation like firefox
@@ -145,6 +181,7 @@ nmap <C-t> :tabnew<CR>
 imap <C-t> <Esc>:tabnew<CR>
 nnoremap <C-f><C-f> :FufFile<CR>
 map <C-_> :tab tag <C-R>=expand("<cword>")<CR><CR>
+vnoremap <C-c> "*y
 
 "filetype plugin indent on  "Detection to determine the type of the current file
 
@@ -159,7 +196,11 @@ let g:languagetool_jar=$HOME . '/Program/LanguageTool/LanguageTool.jar'
 :au BufWinEnter *.py let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 
 " autocmd filetype html        set omnifunc=htmlcomplete#CompleteTags
-autocmd filetype css         set omnifunc=csscomplete#CompleteCSS
+augroup VimCSS3Syntax
+  autocmd!
+  autocmd FileType css,scss setlocal omnifunc=csscomplete#CompleteCSS
+  autocmd FileType css setlocal iskeyword+=-
+augroup END
 au filetype javascript  set omnifunc=javascriptcomplete#CompleteJS
 au filetype c           set omnifunc=ccomplete#Complete
 au filetype php         set omnifunc=phpcomplete#CompletePHP
